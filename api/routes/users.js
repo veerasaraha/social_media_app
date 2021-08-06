@@ -1,33 +1,133 @@
 const router = require('express').Router()
 const User = require('../models/User')
-const bcrypt = require('bcryptjs')
 const { hashPassword } = require('../utils')
 
-// Route       @ /resgister
-// Methdod     @ POST
-// Description @ Create new user
-// Access      @ Public Route
-router.post('/register', async (req, res) => {
-  const { username, email, password } = req.body
+// Route       @ /:id
+// Methdod     @ PUT
+// Description @ Update user profile
+// Access      @ Private Route
+router.put('/:id', async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    if (req.body.password) {
+      try {
+        req.body.password = await hashPassword(req.body.password)
+      } catch (error) {
+        return res.status(500).json(error)
+      }
+    }
 
-  const newUser = new User({
-    username,
-    email,
-    password,
-  })
+    try {
+      const user = await User.findByIdAndUpdate(req.params.id, {
+        $set: req.body,
+      })
 
-  // Hashing password
-  newUser.password = await hashPassword(password)
-
-  try {
-    const user = await newUser.save()
-
-    res.status(200).json({
-      message: 'successfully created new account',
-      user,
+      res.status(200).json({
+        message: 'Account has been updated',
+      })
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  } else {
+    return res.status(403).json({
+      error: 'You can update only your account',
     })
+  }
+})
+
+// Route       @ /:id
+// Methdod     @ DELETE
+// Description @ Delete user profile
+// Access      @ Private Route
+router.delete('/:id', async (req, res) => {
+  if (req.body.userId === req.params.id || req.body.isAdmin) {
+    try {
+      await User.findByIdAndDelete(req.params.id)
+      res.status(200).json({
+        message: 'Accoun has been deleted',
+      })
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  } else {
+    return res.status(403).json({
+      error: 'You can update only your account',
+    })
+  }
+})
+
+// Route       @ /:id
+// Methdod     @ GET
+// Description @ Get user profile
+// Access      @ Private Route
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select(
+      '-password -updatedAt'
+    )
+
+    res.status(200).json(user)
   } catch (error) {
-    console.error(error.message)
+    return res.status(500).json(error)
+  }
+})
+
+// Route       @ /:id/follow
+// Methdod     @ PUT
+// Description @ Update user profile
+// Access      @ Private Route
+router.put('/:id/follow', async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id)
+      const currentUser = await User.findById(req.body.userId)
+
+      if (!user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $push: { followers: req.body.userId } })
+        await currentUser.updateOne({ $push: { following: req.params.id } })
+
+        res.status(200).json({
+          message: 'User has been followed',
+        })
+      } else {
+        return res.status(403).json({
+          error: 'you already follow this user',
+        })
+      }
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  } else {
+    return res.status(403).json("You can't follow yourself")
+  }
+})
+
+// Route       @ /:id/unfollow
+// Methdod     @ PUT
+// Description @ Update user profile
+// Access      @ Private Route
+router.put('/:id/unfollow', async (req, res) => {
+  if (req.body.userId !== req.params.id) {
+    try {
+      const user = await User.findById(req.params.id)
+      const currentUser = await User.findById(req.body.userId)
+
+      if (user.followers.includes(req.body.userId)) {
+        await user.updateOne({ $pull: { followers: req.body.userId } })
+        await currentUser.updateOne({ $pull: { following: req.params.id } })
+
+        res.status(200).json({
+          message: 'User has been unfollowed',
+        })
+      } else {
+        return res.status(403).json({
+          error: 'you don`t follow this user',
+        })
+      }
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  } else {
+    return res.status(403).json("You can't follow yourself")
   }
 })
 

@@ -41,6 +41,22 @@ const UserSchema = new Schema(
       type: Boolean,
       defa: false,
     },
+    bio: {
+      type: String,
+      max: 50,
+    },
+    city: {
+      type: String,
+      max: 30,
+    },
+    from: {
+      type: String,
+      max: 30,
+    },
+    relationship: {
+      type: String,
+      enum: ['Single', 'In a relationship', 'Married'],
+    },
   },
   {
     timestamps: true,

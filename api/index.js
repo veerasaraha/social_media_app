@@ -6,8 +6,23 @@ const morgan = require('morgan')
 const app = express()
 dotenv.config()
 const DBConnection = require('./DB')
+const userRoute = require('./routes/users')
+const authRoute = require('./routes/auth')
 
 // DB Connection
 DBConnection()
 
-app.listen(8800, () => console.log(`Server running...`))
+// Middleware
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(helmet())
+app.use(morgan('common'))
+
+// Routes
+app.use('/api/users', userRoute)
+app.use('/api/auth', authRoute)
+
+const PORT = process.env.PORT || 5500
+app.listen(PORT, () =>
+  console.log(`Server listenng for request at port ${PORT}...`)
+)

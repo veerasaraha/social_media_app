@@ -8,6 +8,7 @@ dotenv.config()
 const DBConnection = require('./DB')
 const userRoute = require('./routes/users')
 const authRoute = require('./routes/auth')
+const postsRoute = require('./routes/posts')
 
 // DB Connection
 DBConnection()
@@ -21,6 +22,7 @@ app.use(morgan('common'))
 // Routes
 app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
+app.use('/api/posts', postsRoute)
 
 const PORT = process.env.PORT || 5500
 app.listen(PORT, () =>

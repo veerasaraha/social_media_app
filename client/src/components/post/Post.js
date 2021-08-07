@@ -1,41 +1,63 @@
 import './Post.css'
 import { MoreVert } from '@material-ui/icons'
+import { Users } from '../../dummyData'
+import PropTypes from 'prop-types'
+import { useState } from 'react'
 
-const Post = () => {
+const Post = ({ post }) => {
+  const { desc, photo, date, userId, like, comment } = post
+
+  const [likes, setLikes] = useState(like)
+  const [isLiked, setIsLiked] = useState(false)
+
+  const likeHandler = () => {
+    setLikes(isLiked ? likes - 1 : likes + 1)
+    setIsLiked(!isLiked)
+  }
+  const userName = Users.filter((user) => user.id === userId)[0].username
+
+  const profilePicture = Users.filter((user) => user.id === userId)[0]
+    .profilePicture
+
   return (
     <div className='post'>
       <div className='postWrapper'>
         <div className='postTop'>
           <div className='postTopLeft'>
-            <img
-              className='postProfileImg'
-              src='/assest/person/1.jpeg'
-              alt=''
-            />
-            <span className='postUsername'>laura</span>
-            <span className='postDate'>5 min ago</span>
+            <img className='postProfileImg' src={profilePicture} alt='' />
+            <span className='postUsername'>{userName}</span>
+            <span className='postDate'>{date} </span>
           </div>
           <div className='postTopRight'>
             <MoreVert />
           </div>
         </div>
         <div className='postCenter'>
-          <span className='postText'>Hey! it's my first post:)</span>
-          <img src='/assest/post/1.jpeg' alt='' className='postImg' />
+          <span className='postText'>{desc && desc}</span>
+          <img src={photo} alt='' className='postImg' />
         </div>
         <div className='postBottom'>
           <div className='postBottomLeft'>
-            <img className='likeIcon' src='/assest/like.png' alt='' />
-            <img className='likeIcon' src='/assest/heart.png' alt='' />
-            <span className='postLikeCounter'>32 people liked</span>
+            <img
+              className='likeIcon'
+              src='/assets/like.png'
+              alt=''
+              onClick={likeHandler}
+            />
+            <img className='likeIcon' src='/assets/heart.png' alt='' />
+            <span className='postLikeCounter'>{likes} people liked</span>
           </div>
           <div className='postBottomRight'>
-            <span className='postCommentText'>9 comments</span>
+            <span className='postCommentText'>{comment} comments</span>
           </div>
         </div>
       </div>
     </div>
   )
+}
+
+Post.propTypes = {
+  post: PropTypes.object.isRequired,
 }
 
 export default Post

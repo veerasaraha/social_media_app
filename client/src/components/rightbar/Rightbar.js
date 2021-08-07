@@ -24,6 +24,8 @@ const Rightbar = ({ profile }) => {
   }
 
   const ProfileRightbar = () => {
+    const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
+
     return (
       <>
         <h4 className='rightbarTitle'>User Information</h4>
@@ -58,7 +60,7 @@ const Rightbar = ({ profile }) => {
             <div className='rightbarFollowing'>
               <img
                 className='rightbarFollowingImg'
-                src='/assets/person/2.jpeg'
+                src={publicFolder + 'person/2.jpeg'}
                 alt=''
               />
               <span className='rightbarFollowingName'>John carts</span>
@@ -67,7 +69,7 @@ const Rightbar = ({ profile }) => {
             <div className='rightbarFollowing'>
               <img
                 className='rightbarFollowingImg'
-                src='/assets/person/3.jpeg'
+                src={publicFolder + 'person/3.jpeg'}
                 alt=''
               />
               <span className='rightbarFollowingName'>John carts</span>
@@ -76,7 +78,7 @@ const Rightbar = ({ profile }) => {
             <div className='rightbarFollowing'>
               <img
                 className='rightbarFollowingImg'
-                src='/assets/person/4.jpeg'
+                src={publicFolder + 'person/4.jpeg'}
                 alt=''
               />
               <span className='rightbarFollowingName'>John carts</span>
@@ -85,7 +87,7 @@ const Rightbar = ({ profile }) => {
             <div className='rightbarFollowing'>
               <img
                 className='rightbarFollowingImg'
-                src='/assets/person/5.jpeg'
+                src={publicFolder + 'person/5.jpeg'}
                 alt=''
               />
               <span className='rightbarFollowingName'>John carts</span>

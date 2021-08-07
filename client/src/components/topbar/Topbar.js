@@ -12,7 +12,7 @@ const Topbar = () => {
           <Search className='searchicon' />
           <input
             type='text'
-            placeholder='Searcg for frined, post or video'
+            placeholder='Search for frined, post or video'
             className='searchinput'
           />
         </div>

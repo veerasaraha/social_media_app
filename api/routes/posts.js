@@ -105,9 +105,10 @@ router.get('/:id', async (req, res) => {
 // Methdod     @ GET
 // Description @ Get posts
 // Access      @ Private Route
-router.get('/timeline/all', async (req, res) => {
+router.get('/timeline/:userId', async (req, res) => {
+  console.log(req.params.userId)
   try {
-    const currentUser = await User.findById(req.body.userId)
+    const currentUser = await User.findById(req.params.userId)
 
     const userPosts = await Post.find({ userId: currentUser._id })
 

@@ -1,26 +1,35 @@
+import { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import axios from 'axios'
+import { format } from 'timeago.js'
 import './Post.css'
 import { MoreVert } from '@material-ui/icons'
-import { Users } from '../../dummyData'
-import PropTypes from 'prop-types'
-import { useState } from 'react'
 
 const Post = ({ post }) => {
-  const { desc, photo, date, userId, like, comment } = post
+  const { description, img, userId, likes, createdAt, comment } = post
 
-  const [likes, setLikes] = useState(like)
+  const [like, setLike] = useState(likes.length)
+  const [user, setUser] = useState({})
   const [isLiked, setIsLiked] = useState(false)
+  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const response = await axios.get(`users/${userId}`)
+      setUser(response.data)
+    }
+
+    fetchUser()
+  }, [userId])
+
+  const { username, profilePicture } = user
 
   const likeHandler = () => {
-    setLikes(isLiked ? likes - 1 : likes + 1)
+    setLike(isLiked ? like - 1 : like + 1)
     setIsLiked(!isLiked)
   }
 
-  const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
-
-  const userName = Users.filter((user) => user.id === userId)[0].username
-
-  const profilePicture = Users.filter((user) => user.id === userId)[0]
-    .profilePicture
+  console.log(profilePicture)
 
   return (
     <div className='post'>
@@ -29,19 +38,22 @@ const Post = ({ post }) => {
           <div className='postTopLeft'>
             <img
               className='postProfileImg'
-              src={publicFolder + profilePicture}
+              src={
+                publicFolder + profilePicture ||
+                publicFolder + 'person/noAvatar.png'
+              }
               alt=''
             />
-            <span className='postUsername'>{userName}</span>
-            <span className='postDate'>{date} </span>
+            <span className='postUsername'>{username}</span>
+            <span className='postDate'>{format(createdAt)} </span>
           </div>
           <div className='postTopRight'>
             <MoreVert />
           </div>
         </div>
         <div className='postCenter'>
-          <span className='postText'>{desc && desc}</span>
-          <img src={publicFolder + photo} alt='' className='postImg' />
+          <span className='postText'>{description && description}</span>
+          <img className='postImg' src={publicFolder + img} alt='' />
         </div>
         <div className='postBottom'>
           <div className='postBottomLeft'>
@@ -56,7 +68,7 @@ const Post = ({ post }) => {
               src={publicFolder + '/heart.png'}
               alt=''
             />
-            <span className='postLikeCounter'>{likes} people liked</span>
+            <span className='postLikeCounter'>{like} people liked</span>
           </div>
           <div className='postBottomRight'>
             <span className='postCommentText'>{comment} comments</span>

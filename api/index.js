@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const dotenv = require('dotenv')
 const helmet = require('helmet')
 const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
 dotenv.config()
 const DBConnection = require('./DB')
@@ -14,6 +15,12 @@ const postsRoute = require('./routes/posts')
 DBConnection()
 
 // Middleware
+const options = {
+  origin: 'http://localhost:3000',
+  credentials: true,
+}
+app.use(cors(options))
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
+import { Link } from 'react-router-dom'
 import { format } from 'timeago.js'
 import './Post.css'
 import { MoreVert } from '@material-ui/icons'
@@ -29,21 +30,21 @@ const Post = ({ post }) => {
     setIsLiked(!isLiked)
   }
 
-  console.log(profilePicture)
-
   return (
     <div className='post'>
       <div className='postWrapper'>
         <div className='postTop'>
           <div className='postTopLeft'>
-            <img
-              className='postProfileImg'
-              src={
-                publicFolder + profilePicture ||
-                publicFolder + 'person/noAvatar.png'
-              }
-              alt=''
-            />
+            <Link to={`/profile/${username}`}>
+              <img
+                className='postProfileImg'
+                src={
+                  publicFolder + profilePicture ||
+                  publicFolder + 'person/noAvatar.png'
+                }
+                alt=''
+              />
+            </Link>
             <span className='postUsername'>{username}</span>
             <span className='postDate'>{format(createdAt)} </span>
           </div>

@@ -4,7 +4,9 @@ import Sidebar from '../../components/sidebar/Sidebar'
 import Feed from '../../components/feed/Feed'
 import Rightbar from '../../components/rightbar/Rightbar'
 
-const Profile = () => {
+const Profile = ({ match }) => {
+  const username = match.params.username
+
   const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
 
   return (
@@ -32,7 +34,7 @@ const Profile = () => {
             </div>
           </div>
           <div className='profileRightBottom'>
-            <Feed />
+            <Feed username={username} />
             <Rightbar profile />
           </div>
         </div>

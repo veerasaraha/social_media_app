@@ -106,7 +106,6 @@ router.get('/:id', async (req, res) => {
 // Description @ Get posts
 // Access      @ Private Route
 router.get('/timeline/:userId', async (req, res) => {
-  console.log(req.params.userId)
   try {
     const currentUser = await User.findById(req.params.userId)
 
@@ -119,6 +118,23 @@ router.get('/timeline/:userId', async (req, res) => {
     )
     let postsArray = userPosts.concat(...friendsPosts)
     res.status(200).json(postsArray)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
+// Route       @ /profile/:username
+// Methdod     @ GET
+// Description @ Get user's all posts
+// Access      @ Private Route
+router.get('/profile/:username', async (req, res) => {
+  console.log(req.url)
+  try {
+    const user = await User.findOne({ username: req.params.username })
+
+    const posts = await Post.find({ userId: user._id })
+
+    res.status(200).json(posts)
   } catch (error) {
     res.status(500).json(error)
   }

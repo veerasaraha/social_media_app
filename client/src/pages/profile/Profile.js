@@ -8,7 +8,9 @@ import Rightbar from '../../components/rightbar/Rightbar'
 
 const Profile = ({ match }) => {
   const [user, setUser] = useState({})
+
   const USER_NAME = match.params.username
+
   const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
 
   useEffect(() => {

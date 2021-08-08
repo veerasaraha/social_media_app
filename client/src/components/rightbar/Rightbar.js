@@ -1,8 +1,9 @@
+import PropTypes from 'prop-types'
 import './Rightbar.css'
 import { Users } from '../../dummyData'
 import Online from '../online/Online'
 
-const Rightbar = ({ profile }) => {
+const Rightbar = ({ userInfo }) => {
   const HomeRightbar = () => {
     return (
       <>
@@ -26,23 +27,25 @@ const Rightbar = ({ profile }) => {
   const ProfileRightbar = () => {
     const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
 
+    const { city, from, relationship } = userInfo
+
     return (
       <>
         <h4 className='rightbarTitle'>User Information</h4>
         <div className='rightbarInfo'>
           <div className='rightbarInfoItem'>
             <span className='rightbarInfoKey'>City :</span>
-            <span className='rightbarInfoValue'>Chennai</span>
+            <span className='rightbarInfoValue'>{city}</span>
           </div>
 
           <div className='rightbarInfoItem'>
             <span className='rightbarInfoKey'>From :</span>
-            <span className='rightbarInfoValue'>India</span>
+            <span className='rightbarInfoValue'>{from}</span>
           </div>
 
           <div className='rightbarInfoItem'>
             <span className='rightbarInfoKey'>Relationship :</span>
-            <span className='rightbarInfoValue'>Single</span>
+            <span className='rightbarInfoValue'>{relationship}</span>
           </div>
 
           <h4 className='rightbarTitle'>User Friends</h4>
@@ -101,10 +104,14 @@ const Rightbar = ({ profile }) => {
   return (
     <div className='rightbar'>
       <div className='rightbarWrapper'>
-        {profile ? <ProfileRightbar /> : <HomeRightbar />}
+        {userInfo ? <ProfileRightbar /> : <HomeRightbar />}
       </div>
     </div>
   )
+}
+
+Rightbar.propTypes = {
+  userInfo: PropTypes.object.isRequired,
 }
 
 export default Rightbar

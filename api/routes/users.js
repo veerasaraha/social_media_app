@@ -55,15 +55,18 @@ router.delete('/:id', async (req, res) => {
   }
 })
 
-// Route       @ /:id
+// Route       @ /
 // Methdod     @ GET
 // Description @ Get user profile
 // Access      @ Private Route
-router.get('/:id', async (req, res) => {
+router.get('/', async (req, res) => {
+  const userId = req.query.userId
+  const username = req.query.username
+
   try {
-    const user = await User.findById(req.params.id).select(
-      '-password -updatedAt'
-    )
+    const user = userId
+      ? await User.findById(userId).select('-password -updatedAt')
+      : await User.findOne({ username }).select('-password -updatedAt')
 
     res.status(200).json(user)
   } catch (error) {

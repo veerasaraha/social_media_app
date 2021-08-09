@@ -10,6 +10,7 @@ const Register = () => {
   const password = useRef()
   const confirmPassword = useRef()
   const history = useHistory()
+  const API_URL = process.env.REACT_APP_API_URL
 
   const submitaHandler = async (event) => {
     event.preventDefault()
@@ -24,7 +25,10 @@ const Register = () => {
       }
 
       try {
-        const response = await axios.post('api/auth/register', userCredentials)
+        const response = await axios.post(
+          `${API_URL}api/auth/register`,
+          userCredentials
+        )
         console.log(response.data.isRegistered)
         if (response.data.isRegistered) {
           history.push('/login')

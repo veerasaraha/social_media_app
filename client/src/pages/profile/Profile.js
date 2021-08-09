@@ -8,6 +8,7 @@ import Rightbar from '../../components/rightbar/Rightbar'
 
 const Profile = ({ match }) => {
   const [user, setUser] = useState({})
+  const API_URL = process.env.REACT_APP_API_URL
 
   const USER_NAME = match.params.username
 
@@ -15,11 +16,13 @@ const Profile = ({ match }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/api/users?username=${USER_NAME}`)
+      const response = await axios.get(
+        `${API_URL}/api/users?username=${USER_NAME}`
+      )
       setUser(response.data)
     }
     fetchUser()
-  }, [USER_NAME])
+  }, [API_URL, USER_NAME])
 
   const { username, bio, profilePicture, coverPicture } = user
 

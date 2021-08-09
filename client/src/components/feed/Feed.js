@@ -11,16 +11,20 @@ const Feed = ({ username }) => {
   const [posts, setPosts] = useState([])
   const { user } = useContext(AuthContext)
   const { _id } = user
+  const API_URL = process.env.REACT_APP_API_URL
 
+  const sortPosts = (arr) => {
+    return arr.sort((p1, p2) => new Date(p2.createdAt) - new Date(p1.createdAt))
+  }
   useEffect(() => {
     const fetchPosts = async () => {
       const response = username
-        ? await axios.get(`/api/posts/profile/${username}`)
-        : await axios.get(`/api/posts/timeline/${_id}`)
-      setPosts(response.data)
+        ? await axios.get(`${API_URL}/api/posts/profile/${username}`)
+        : await axios.get(`${API_URL}/api/posts/timeline/${_id}`)
+      setPosts(sortPosts(response.data))
     }
     fetchPosts()
-  }, [username, _id])
+  }, [API_URL, username, _id])
 
   console.log(posts)
   return (

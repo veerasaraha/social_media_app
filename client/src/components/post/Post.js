@@ -17,6 +17,7 @@ const Post = ({ post }) => {
     createdAt,
     comment,
   } = post
+  const API_URL = process.env.REACT_APP_API_URL
 
   const { user: currentUser } = useContext(AuthContext)
   const [like, setLike] = useState(likes.length)
@@ -30,22 +31,22 @@ const Post = ({ post }) => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/api/users?userId=${postUserId}`)
+      const response = await axios.get(
+        `${API_URL}/api/users?userId=${postUserId}`
+      )
       setUser(response.data)
     }
 
     fetchUser()
-  }, [postUserId])
+  }, [API_URL, postUserId])
 
   const { username, profilePicture } = user
 
   const likeHandler = async () => {
     try {
-      const reponse = await axios.put(`/api/posts/${_id}/like`, {
+      await axios.put(`${API_URL}/api/posts/${_id}/like`, {
         userId: user._id,
       })
-
-      console.log(reponse)
     } catch (error) {
       console.error(error)
     }

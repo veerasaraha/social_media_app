@@ -8,7 +8,7 @@ import './Login.css'
 const Login = () => {
   const email = useRef()
   const password = useRef()
-  const { user, isFetching, error, dispatch } = useContext(AuthContext)
+  const { isFetching, dispatch } = useContext(AuthContext)
 
   const hanldeSubmit = (event) => {
     event.preventDefault()
@@ -19,7 +19,6 @@ const Login = () => {
     )
   }
 
-  console.log(user)
   return (
     <div className='login'>
       <div className='loginWrapper'>

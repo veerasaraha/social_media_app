@@ -1,4 +1,5 @@
 import { useContext, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { login } from '../../api'
 import { AuthContext } from '../../context/AuthContext'
 import { CircularProgress } from '@material-ui/core'
@@ -53,9 +54,12 @@ const Login = () => {
               )}
             </button>
             <span className='loginForgot'>Forgot Password?</span>
-            <button className='loginRegisterButton'>
-              Create a new account
-            </button>
+
+            <Link to='/register' className='loginRegisterLink'>
+              <button className='loginRegisterButton'>
+                Create a new account
+              </button>
+            </Link>
           </form>
         </div>
       </div>

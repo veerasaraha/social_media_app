@@ -1,31 +1,54 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { format } from 'timeago.js'
 import './Post.css'
 import { MoreVert } from '@material-ui/icons'
+import { AuthContext } from '../../context/AuthContext'
 
 const Post = ({ post }) => {
-  const { description, img, userId, likes, createdAt, comment } = post
+  const {
+    _id,
+    description,
+    img,
+    userId: postUserId,
+    likes,
+    createdAt,
+    comment,
+  } = post
 
+  const { user: currentUser } = useContext(AuthContext)
   const [like, setLike] = useState(likes.length)
   const [user, setUser] = useState({})
   const [isLiked, setIsLiked] = useState(false)
   const publicFolder = process.env.REACT_APP_PUBLIC_FOLDER
 
   useEffect(() => {
+    setIsLiked(likes.includes(currentUser._id))
+  }, [currentUser._id, likes])
+
+  useEffect(() => {
     const fetchUser = async () => {
-      const response = await axios.get(`/api/users?userId=${userId}`)
+      const response = await axios.get(`/api/users?userId=${postUserId}`)
       setUser(response.data)
     }
 
     fetchUser()
-  }, [userId])
+  }, [postUserId])
 
   const { username, profilePicture } = user
 
-  const likeHandler = () => {
+  const likeHandler = async () => {
+    try {
+      const reponse = await axios.put(`/api/posts/${_id}/like`, {
+        userId: user._id,
+      })
+
+      console.log(reponse)
+    } catch (error) {
+      console.error(error)
+    }
     setLike(isLiked ? like - 1 : like + 1)
     setIsLiked(!isLiked)
   }
@@ -39,8 +62,9 @@ const Post = ({ post }) => {
               <img
                 className='postProfileImg'
                 src={
-                  publicFolder + profilePicture ||
-                  publicFolder + 'person/noAvatar.png'
+                  profilePicture
+                    ? publicFolder + profilePicture
+                    : publicFolder + 'person/noAvatar.png'
                 }
                 alt=''
               />

@@ -13,8 +13,6 @@ const Rightbar = ({ user }) => {
   const [friends, setFriends] = useState([])
   const { user: currentUser, dispatch } = useContext(AuthContext)
 
-  console.log(user)
-
   const [isFollowing, setIsFollowing] = useState(
     currentUser.following.includes(user?._id)
   )

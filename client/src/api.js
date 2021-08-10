@@ -7,9 +7,11 @@ export const login = async (userCredentials, dispatch) => {
   dispatch({ type: LOGIN_REQUEST })
   try {
     const response = await axios.post(
-      `${API_URL}api/auth/login`,
+      `${API_URL}/api/auth/login`,
       userCredentials
     )
+
+    localStorage.setItem('user', JSON.stringify(response.data))
 
     dispatch({ type: LOGIN_SUCCESS, payload: response.data })
   } catch (error) {

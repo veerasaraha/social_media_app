@@ -7,6 +7,7 @@ import {
 } from 'react-router-dom'
 import { AuthContext } from './context/AuthContext'
 import Home from './pages/home/Home'
+import Messenger from './pages/messenger/Messenger'
 import Login from './pages/login/Login'
 import Profile from './pages/profile/Profile'
 import Register from './pages/register/Register'
@@ -25,6 +26,10 @@ function App() {
         </Route>
         <Route path='/register' exact>
           {user ? <Redirect to='/' /> : <Register />}
+        </Route>
+
+        <Route path='/messenger' exact>
+          {!user ? <Redirect to='/' /> : <Messenger />}
         </Route>
         <Route path='/profile/:username' exact component={Profile} />
       </Switch>

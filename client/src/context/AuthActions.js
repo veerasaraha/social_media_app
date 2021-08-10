@@ -4,7 +4,7 @@ export const LOGIN_FAIL = 'LOGIN_FAIL'
 export const FOLLOW = 'FOLLOW'
 export const UNFOLLOW = 'UNFOLLOW'
 
-export const LoginRequest = (userCredentials) => ({
+export const LoginRequest = () => ({
   type: LOGIN_REQUEST,
 })
 

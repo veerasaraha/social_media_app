@@ -1,4 +1,10 @@
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL } from './AuthActions'
+import {
+  LOGIN_REQUEST,
+  LOGIN_SUCCESS,
+  LOGIN_FAIL,
+  FOLLOW,
+  UNFOLLOW,
+} from './AuthActions'
 
 const AuthReducer = (state, action) => {
   const { type, payload } = action
@@ -21,6 +27,22 @@ const AuthReducer = (state, action) => {
         user: null,
         isFetching: false,
         error: payload,
+      }
+    case FOLLOW:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          following: [...state.user.following, payload],
+        },
+      }
+    case UNFOLLOW:
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          following: state.user.following.filter((f) => f !== payload),
+        },
       }
     default:
       return state

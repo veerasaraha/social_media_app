@@ -26,11 +26,11 @@ const Feed = ({ username }) => {
     fetchPosts()
   }, [API_URL, username, _id])
 
-  console.log(posts)
   return (
     <div className='feed'>
       <div className='feedWrapper'>
-        <Share />
+        {(!username || username === user.username) && <Share />}
+
         {posts.map((post) => (
           <Post post={post} key={post._id} />
         ))}

@@ -74,6 +74,32 @@ router.get('/', async (req, res) => {
   }
 })
 
+// Route       @ /friends
+// Methdod     @ GET
+// Description @ Get user profile
+// Access      @ Private Route
+router.get('/friends/:userId', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId)
+
+    const friends = await Promise.all(
+      user.following.map((friendId) => {
+        return User.findById(friendId)
+      })
+    )
+
+    let friendsList = []
+
+    friends.map((frined) => {
+      const { _id, username, profilePicture } = frined
+      friendsList.push({ _id, username, profilePicture })
+    })
+    res.status(200).json(friendsList)
+  } catch (error) {
+    res.status(500).json(error)
+  }
+})
+
 // Route       @ /:id/follow
 // Methdod     @ PUT
 // Description @ Update user profile

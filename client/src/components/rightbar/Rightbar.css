@@ -90,3 +90,23 @@
   object-fit: cover;
   border-radius: 5px;
 }
+
+.rightbarFollowButton {
+  margin-top: 30px;
+
+  margin-bottom: 10px;
+  border: none;
+  background-color: #1872f2;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.rightbarFollowButton:focus {
+  outline: none;
+}

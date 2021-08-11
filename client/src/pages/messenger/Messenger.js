@@ -6,6 +6,7 @@ import Message from '../../components/message/Message'
 import Topbar from '../../components/topbar/Topbar'
 import { AuthContext } from '../../context/AuthContext'
 import './messenger.css'
+import { io } from 'socket.io-client'
 
 const Messenger = () => {
   const { user } = useContext(AuthContext)
@@ -13,9 +14,35 @@ const Messenger = () => {
   const [currentChat, setCurrentChat] = useState({})
   const [messages, setMessages] = useState([])
   const [newMessage, setNewMessage] = useState('')
+  const [arraivalMessage, setArraivalMessage] = useState({})
   const scrollRef = useRef()
-
+  const socket = useRef()
   const API_URL = process.env.REACT_APP_API_URL
+
+  useEffect(() => {
+    socket.current = io('ws://localhost:8900')
+
+    socket.current.on('getMessage', (data) => {
+      setArraivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      })
+    })
+  }, [])
+
+  useEffect(() => {
+    arraivalMessage && currentChat?.members?.includes(arraivalMessage.sender)
+
+    setMessages((prev) => [...prev, arraivalMessage])
+  }, [arraivalMessage, currentChat])
+
+  useEffect(() => {
+    socket.current.emit('connectUser', user._id)
+    socket.current.on('getUsers', (users) => {
+      console.log(users)
+    })
+  }, [user])
 
   useEffect(() => {
     const getConversations = async () => {
@@ -52,6 +79,14 @@ const Messenger = () => {
       text: newMessage,
       conversationId: currentChat._id,
     }
+
+    const receiverId = currentChat.members.find((mbr) => mbr !== user._id)
+
+    socket.current.emit('sendMessage', {
+      senderId: user._id,
+      receiverId,
+      text: newMessage,
+    })
 
     try {
       const response = await axios.post(`${API_URL}/api/messages`, message)

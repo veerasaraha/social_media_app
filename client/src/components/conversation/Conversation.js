@@ -1,7 +1,6 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import './Conversation.css'
-import { AuthContext } from '../../context/AuthContext'
 
 const Conversation = ({ conversation, currentUserId }) => {
   let [friends, setFriends] = useState({})

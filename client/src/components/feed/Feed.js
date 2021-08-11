@@ -40,7 +40,7 @@ const Feed = ({ username }) => {
 }
 
 Feed.propTypes = {
-  username: PropTypes.string.isRequired,
+  username: PropTypes.string,
 }
 
 export default Feed

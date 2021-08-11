@@ -1,29 +1,30 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import axios from 'axios'
+import { io } from 'socket.io-client'
 import ChatOnline from '../../components/chatOnline/ChatOnline'
 import Conversation from '../../components/conversation/Conversation'
 import Message from '../../components/message/Message'
 import Topbar from '../../components/topbar/Topbar'
 import { AuthContext } from '../../context/AuthContext'
 import './messenger.css'
-import { io } from 'socket.io-client'
 
 const Messenger = () => {
   const { user } = useContext(AuthContext)
   const [conversations, setConversations] = useState([])
   const [currentChat, setCurrentChat] = useState({})
   const [messages, setMessages] = useState([])
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const [arrivalMessage, setArrivalMessage] = useState({})
   const [newMessage, setNewMessage] = useState('')
-  const [arraivalMessage, setArraivalMessage] = useState({})
   const scrollRef = useRef()
   const socket = useRef()
+
   const API_URL = process.env.REACT_APP_API_URL
 
   useEffect(() => {
     socket.current = io('ws://localhost:8900')
-
     socket.current.on('getMessage', (data) => {
-      setArraivalMessage({
+      setArrivalMessage({
         sender: data.senderId,
         text: data.text,
         createdAt: Date.now(),
@@ -32,15 +33,17 @@ const Messenger = () => {
   }, [])
 
   useEffect(() => {
-    arraivalMessage && currentChat?.members?.includes(arraivalMessage.sender)
-
-    setMessages((prev) => [...prev, arraivalMessage])
-  }, [arraivalMessage, currentChat])
+    arrivalMessage &&
+      currentChat.members?.includes(arrivalMessage.sender) &&
+      setMessages((prev) => [...prev, arrivalMessage])
+  }, [arrivalMessage, currentChat])
 
   useEffect(() => {
     socket.current.emit('connectUser', user._id)
     socket.current.on('getUsers', (users) => {
-      console.log(users)
+      setOnlineUsers(
+        user.following.filter((f) => users.some((u) => u.userId === f))
+      )
     })
   }, [user])
 
@@ -80,14 +83,15 @@ const Messenger = () => {
       conversationId: currentChat._id,
     }
 
-    const receiverId = currentChat.members.find((mbr) => mbr !== user._id)
+    const receiverId = currentChat.members?.find(
+      (member) => member !== user._id
+    )
 
     socket.current.emit('sendMessage', {
       senderId: user._id,
       receiverId,
       text: newMessage,
     })
-
     try {
       const response = await axios.post(`${API_URL}/api/messages`, message)
       setMessages([...messages, response.data])
@@ -151,12 +155,11 @@ const Messenger = () => {
         </div>
         <div className='chatOnline'>
           <div className='chatOnlineWrapper'>
-            <ChatOnline />
-            <ChatOnline />
-            <ChatOnline />
-            <ChatOnline />
-            <ChatOnline />
-            <ChatOnline />
+            <ChatOnline
+              onlineUsers={onlineUsers}
+              currentUser={user._id}
+              setCurrentChat={setCurrentChat}
+            />
           </div>
         </div>
       </div>

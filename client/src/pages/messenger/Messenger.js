@@ -1,10 +1,72 @@
+import { useContext, useEffect, useRef, useState } from 'react'
+import axios from 'axios'
 import ChatOnline from '../../components/chatOnline/ChatOnline'
 import Conversation from '../../components/conversation/Conversation'
 import Message from '../../components/message/Message'
 import Topbar from '../../components/topbar/Topbar'
+import { AuthContext } from '../../context/AuthContext'
 import './messenger.css'
 
-const messenger = () => {
+const Messenger = () => {
+  const { user } = useContext(AuthContext)
+  const [conversations, setConversations] = useState([])
+  const [currentChat, setCurrentChat] = useState({})
+  const [messages, setMessages] = useState([])
+  const [newMessage, setNewMessage] = useState('')
+  const scrollRef = useRef()
+
+  const API_URL = process.env.REACT_APP_API_URL
+
+  useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/conversations/${user._id}`
+        )
+        setConversations(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getConversations()
+  }, [API_URL, user])
+
+  useEffect(() => {
+    const getMessages = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/messages/${currentChat._id}`
+        )
+        setMessages(response.data)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getMessages()
+  }, [API_URL, currentChat])
+
+  const submitHandler = async (e) => {
+    e.preventDefault()
+    const message = {
+      sender: user._id,
+      text: newMessage,
+      conversationId: currentChat._id,
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/api/messages`, message)
+      setMessages([...messages, response.data])
+    } catch (error) {
+      console.log(error)
+    }
+
+    setNewMessage('')
+  }
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behaivor: 'smooth' })
+  }, [messages])
+
   return (
     <>
       <Topbar />
@@ -16,41 +78,40 @@ const messenger = () => {
               type='text'
               placeholder='Search for friends'
             />
-            <Conversation />
-            <Conversation />
-            <Conversation />
-            <Conversation />
-            <Conversation />
+            {conversations.map((conv) => (
+              <div onClick={() => setCurrentChat(conv)} key={conv._id}>
+                <Conversation conversation={conv} currentUserId={user._id} />
+              </div>
+            ))}
           </div>
         </div>
         <div className='chatBox'>
           <div className='chatBoxWrapper'>
-            <div className='chatBoxTop'>
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message />
-              <Message own={true} />
-              <Message />
-              <Message />
-            </div>
-            <div className='chatBoxBottom'>
-              <textarea
-                className='chatMessageInput'
-                placeholder='Write a message'></textarea>
-              <button className='chatSubmitButton'>Send</button>
-            </div>
+            {currentChat ? (
+              <>
+                <div className='chatBoxTop'>
+                  {messages.map((msg) => (
+                    <div ref={scrollRef} key={msg._id}>
+                      <Message message={msg} own={msg.sender === user._id} />
+                    </div>
+                  ))}
+                </div>
+                <div className='chatBoxBottom'>
+                  <textarea
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    value={newMessage}
+                    className='chatMessageInput'
+                    placeholder='Write a message'></textarea>
+                  <button className='chatSubmitButton' onClick={submitHandler}>
+                    Send
+                  </button>
+                </div>
+              </>
+            ) : (
+              <span className='noConversationText'>
+                Open a conversation to start a chat.
+              </span>
+            )}
           </div>
         </div>
         <div className='chatOnline'>
@@ -68,4 +129,4 @@ const messenger = () => {
   )
 }
 
-export default messenger
+export default Messenger

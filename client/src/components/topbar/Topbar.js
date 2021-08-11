@@ -36,7 +36,9 @@ const Topbar = () => {
             <span className='topbariconbadge'>1</span>
           </div>
           <div className='topbariconitem'>
-            <Chat />
+            <Link to='/messenger'>
+              <Chat />
+            </Link>
             <span className='topbariconbadge'>2</span>
           </div>
           <div className='topbariconitem'>

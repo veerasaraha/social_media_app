@@ -10,6 +10,8 @@ const DBConnection = require('./DB')
 const userRoute = require('./routes/users')
 const authRoute = require('./routes/auth')
 const postsRoute = require('./routes/posts')
+const conversationRoute = require('./routes/conversation')
+const messageRoute = require('./routes/message')
 const path = require('path')
 
 dotenv.config()
@@ -49,6 +51,8 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
 app.use('/api/users', userRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/posts', postsRoute)
+app.use('/api/conversations', conversationRoute)
+app.use('/api/messages', messageRoute)
 
 const PORT = process.env.PORT || 5500
 app.listen(PORT, () =>

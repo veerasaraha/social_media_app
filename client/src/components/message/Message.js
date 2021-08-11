@@ -1,6 +1,8 @@
 import './Message.css'
+import { format } from 'timeago.js'
 
-const Message = ({ own }) => {
+const Message = ({ message, own }) => {
+  console.log(own)
   return (
     <div className={own ? 'message own' : 'message'}>
       <div className='messageTop'>
@@ -9,9 +11,9 @@ const Message = ({ own }) => {
           src='https://image.freepik.com/free-photo/river-surrounded-by-forests-cloudy-sky-thuringia-germany_181624-30863.jpg'
           alt=''
         />
-        <p className='messageText'>this is s message</p>
+        <p className='messageText'>{message.text}</p>
       </div>
-      <div className='messageBottom'>1 hour ago</div>
+      <div className='messageBottom'>{format(message.createdAt)}</div>
     </div>
   )
 }
